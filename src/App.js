@@ -2,6 +2,10 @@
 
 import React, { Component } from 'react';
 import Task from './components/task';
+import {addtask} from './actions';
+import {connect} from 'react-redux';
+import { deletetask } from './actions/delete';
+import {edittask} from './actions/edit';
 class App extends Component {
 
   constructor(props){
@@ -21,8 +25,8 @@ class App extends Component {
 
   // adding task
  handleClick=()=>{
-   const {task,tasks}=this.state;
-   console.log(task.id, "task")
+   const {task}=this.state;
+  //  console.log(task.id, "task")
     // check if task is empty
     if(task === ''){
       alert("task is empty")
@@ -30,41 +34,51 @@ class App extends Component {
 
     else{
     // if not add this task in tasks array
-    tasks.push(task);
-    this.setState({tasks:tasks});
-    this.setState({task:''});
+    // tasks.push(task);
+    // this.setState({tasks:tasks});
+    // this.setState({task:''});
+
+    //using redux
+      console.log('dispatch', this.props);
+      this.props.dispatch(addtask(task));
     }
-    
+    this.setState({task:''});
   }
 
 
   // to delete tasks
   handleDelete=(task)=>{
-    const {tasks}=this.state;
+    // const {tasks}=this.state;
     // use filter to filter out task from array
-    const deleteTask = tasks.filter(todo => todo !== task)
-    this.setState({tasks: deleteTask});
+    // const deleteTask = tasks.filter(todo => todo !== task)
+    // this.setState({tasks: deleteTask});
+
+    // using redux
+    this.props.dispatch(deletetask(task));
     
   }
 
  // to update the edited value
   updateValue = (index, newValue) => {
     // console.log(index, newValue);
-    const {tasks}=this.state;
-    var oldT = tasks[index];
-    tasks.push(newValue);
-    const deleteTask = tasks.filter(todo => todo !== oldT)
-   
-    this.setState({
-      tasks:deleteTask
-    })
+    // const {tasks}=this.state;
+    // var oldT = tasks[index];
+    // tasks.push(newValue);
+    // const deleteTask = tasks.filter(todo => todo !== oldT)
+    // this.setState({
+    //   tasks:deleteTask
+    // })
+
+     // using redux
+    this.props.dispatch(edittask(index,newValue));
   }
 
   render() {
     console.log('rendr')
-   const {task,tasks, editMode}=this.state;
+   const {task, editMode}=this.state;
+   const {tasks} = this.props;
     console.log('task',task);
-    console.log("tasks",tasks);
+    console.log("dispatch", this.props);
     return (
       <div style={{margin:'10% 0% 0% 30%'}}>
       <input  style={{height:'30px', width: '30%'}} onChange={this.handleOnChange}/>
@@ -86,4 +100,15 @@ class App extends Component {
   }
 }
 
-export default App;
+function mapStateToProps(state){
+  return {
+    tasks:state.tasks
+  }
+}
+
+export default connect (mapStateToProps)(App);
+
+
+
+
+// export default App;
